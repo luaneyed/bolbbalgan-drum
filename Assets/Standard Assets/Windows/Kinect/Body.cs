@@ -44,62 +44,62 @@ namespace Windows.Kinect
         }
 
 
-        // Public Properties
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern int Windows_Kinect_Body_get_Activities(RootSystem.IntPtr pNative, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.Activity[] outKeys, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.DetectionResult[] outValues, int outCollectionSize);
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern int Windows_Kinect_Body_get_Activities_Length(RootSystem.IntPtr pNative);
-        public  RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Activity, Windows.Kinect.DetectionResult> Activities
-        {
-            get
-            {
-                if (_pNative == RootSystem.IntPtr.Zero)
-                {
-                    throw new RootSystem.ObjectDisposedException("Body");
-                }
+//        // Public Properties
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern int Windows_Kinect_Body_get_Activities(RootSystem.IntPtr pNative, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.Activity[] outKeys, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.DetectionResult[] outValues, int outCollectionSize);
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern int Windows_Kinect_Body_get_Activities_Length(RootSystem.IntPtr pNative);
+//        public  RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Activity, Windows.Kinect.DetectionResult> Activities
+//        {
+//            get
+//            {
+//                if (_pNative == RootSystem.IntPtr.Zero)
+//                {
+//                    throw new RootSystem.ObjectDisposedException("Body");
+//                }
+//
+//                int outCollectionSize = Windows_Kinect_Body_get_Activities_Length(_pNative);
+//                var outKeys = new Windows.Kinect.Activity[outCollectionSize];
+//                var outValues = new Windows.Kinect.DetectionResult[outCollectionSize];
+//                var managedDictionary = new RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Activity, Windows.Kinect.DetectionResult>();
+//
+//                outCollectionSize = Windows_Kinect_Body_get_Activities(_pNative, outKeys, outValues, outCollectionSize);
+//                Helper.ExceptionHelper.CheckLastError();
+//                for(int i=0;i<outCollectionSize;i++)
+//                {
+//                    managedDictionary.Add(outKeys[i], outValues[i]);
+//                }
+//                return managedDictionary;
+//            }
+//        }
 
-                int outCollectionSize = Windows_Kinect_Body_get_Activities_Length(_pNative);
-                var outKeys = new Windows.Kinect.Activity[outCollectionSize];
-                var outValues = new Windows.Kinect.DetectionResult[outCollectionSize];
-                var managedDictionary = new RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Activity, Windows.Kinect.DetectionResult>();
-
-                outCollectionSize = Windows_Kinect_Body_get_Activities(_pNative, outKeys, outValues, outCollectionSize);
-                Helper.ExceptionHelper.CheckLastError();
-                for(int i=0;i<outCollectionSize;i++)
-                {
-                    managedDictionary.Add(outKeys[i], outValues[i]);
-                }
-                return managedDictionary;
-            }
-        }
-
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern int Windows_Kinect_Body_get_Appearance(RootSystem.IntPtr pNative, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.Appearance[] outKeys, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.DetectionResult[] outValues, int outCollectionSize);
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern int Windows_Kinect_Body_get_Appearance_Length(RootSystem.IntPtr pNative);
-        public  RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Appearance, Windows.Kinect.DetectionResult> Appearance
-        {
-            get
-            {
-                if (_pNative == RootSystem.IntPtr.Zero)
-                {
-                    throw new RootSystem.ObjectDisposedException("Body");
-                }
-
-                int outCollectionSize = Windows_Kinect_Body_get_Appearance_Length(_pNative);
-                var outKeys = new Windows.Kinect.Appearance[outCollectionSize];
-                var outValues = new Windows.Kinect.DetectionResult[outCollectionSize];
-                var managedDictionary = new RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Appearance, Windows.Kinect.DetectionResult>();
-
-                outCollectionSize = Windows_Kinect_Body_get_Appearance(_pNative, outKeys, outValues, outCollectionSize);
-                Helper.ExceptionHelper.CheckLastError();
-                for(int i=0;i<outCollectionSize;i++)
-                {
-                    managedDictionary.Add(outKeys[i], outValues[i]);
-                }
-                return managedDictionary;
-            }
-        }
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern int Windows_Kinect_Body_get_Appearance(RootSystem.IntPtr pNative, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.Appearance[] outKeys, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.DetectionResult[] outValues, int outCollectionSize);
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern int Windows_Kinect_Body_get_Appearance_Length(RootSystem.IntPtr pNative);
+//        public  RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Appearance, Windows.Kinect.DetectionResult> Appearance
+//        {
+//            get
+//            {
+//                if (_pNative == RootSystem.IntPtr.Zero)
+//                {
+//                    throw new RootSystem.ObjectDisposedException("Body");
+//                }
+//
+//                int outCollectionSize = Windows_Kinect_Body_get_Appearance_Length(_pNative);
+//                var outKeys = new Windows.Kinect.Appearance[outCollectionSize];
+//                var outValues = new Windows.Kinect.DetectionResult[outCollectionSize];
+//                var managedDictionary = new RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Appearance, Windows.Kinect.DetectionResult>();
+//
+//                outCollectionSize = Windows_Kinect_Body_get_Appearance(_pNative, outKeys, outValues, outCollectionSize);
+//                Helper.ExceptionHelper.CheckLastError();
+//                for(int i=0;i<outCollectionSize;i++)
+//                {
+//                    managedDictionary.Add(outKeys[i], outValues[i]);
+//                }
+//                return managedDictionary;
+//            }
+//        }
 
         [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
         private static extern Windows.Kinect.FrameEdges Windows_Kinect_Body_get_ClippedEdges(RootSystem.IntPtr pNative);
@@ -131,33 +131,33 @@ namespace Windows.Kinect
             }
         }
 
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern int Windows_Kinect_Body_get_Expressions(RootSystem.IntPtr pNative, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.Expression[] outKeys, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.DetectionResult[] outValues, int outCollectionSize);
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern int Windows_Kinect_Body_get_Expressions_Length(RootSystem.IntPtr pNative);
-        public  RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Expression, Windows.Kinect.DetectionResult> Expressions
-        {
-            get
-            {
-                if (_pNative == RootSystem.IntPtr.Zero)
-                {
-                    throw new RootSystem.ObjectDisposedException("Body");
-                }
-
-                int outCollectionSize = Windows_Kinect_Body_get_Expressions_Length(_pNative);
-                var outKeys = new Windows.Kinect.Expression[outCollectionSize];
-                var outValues = new Windows.Kinect.DetectionResult[outCollectionSize];
-                var managedDictionary = new RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Expression, Windows.Kinect.DetectionResult>();
-
-                outCollectionSize = Windows_Kinect_Body_get_Expressions(_pNative, outKeys, outValues, outCollectionSize);
-                Helper.ExceptionHelper.CheckLastError();
-                for(int i=0;i<outCollectionSize;i++)
-                {
-                    managedDictionary.Add(outKeys[i], outValues[i]);
-                }
-                return managedDictionary;
-            }
-        }
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern int Windows_Kinect_Body_get_Expressions(RootSystem.IntPtr pNative, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.Expression[] outKeys, [RootSystem.Runtime.InteropServices.Out] Windows.Kinect.DetectionResult[] outValues, int outCollectionSize);
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern int Windows_Kinect_Body_get_Expressions_Length(RootSystem.IntPtr pNative);
+//        public  RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Expression, Windows.Kinect.DetectionResult> Expressions
+//        {
+//            get
+//            {
+//                if (_pNative == RootSystem.IntPtr.Zero)
+//                {
+//                    throw new RootSystem.ObjectDisposedException("Body");
+//                }
+//
+//                int outCollectionSize = Windows_Kinect_Body_get_Expressions_Length(_pNative);
+//                var outKeys = new Windows.Kinect.Expression[outCollectionSize];
+//                var outValues = new Windows.Kinect.DetectionResult[outCollectionSize];
+//                var managedDictionary = new RootSystem.Collections.Generic.Dictionary<Windows.Kinect.Expression, Windows.Kinect.DetectionResult>();
+//
+//                outCollectionSize = Windows_Kinect_Body_get_Expressions(_pNative, outKeys, outValues, outCollectionSize);
+//                Helper.ExceptionHelper.CheckLastError();
+//                for(int i=0;i<outCollectionSize;i++)
+//                {
+//                    managedDictionary.Add(outKeys[i], outValues[i]);
+//                }
+//                return managedDictionary;
+//            }
+//        }
 
         [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
         private static extern Windows.Kinect.TrackingConfidence Windows_Kinect_Body_get_HandLeftConfidence(RootSystem.IntPtr pNative);
@@ -174,20 +174,20 @@ namespace Windows.Kinect
             }
         }
 
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern Windows.Kinect.HandState Windows_Kinect_Body_get_HandLeftState(RootSystem.IntPtr pNative);
-        public  Windows.Kinect.HandState HandLeftState
-        {
-            get
-            {
-                if (_pNative == RootSystem.IntPtr.Zero)
-                {
-                    throw new RootSystem.ObjectDisposedException("Body");
-                }
-
-                return Windows_Kinect_Body_get_HandLeftState(_pNative);
-            }
-        }
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern Windows.Kinect.HandState Windows_Kinect_Body_get_HandLeftState(RootSystem.IntPtr pNative);
+//        public  Windows.Kinect.HandState HandLeftState
+//        {
+//            get
+//            {
+//                if (_pNative == RootSystem.IntPtr.Zero)
+//                {
+//                    throw new RootSystem.ObjectDisposedException("Body");
+//                }
+//
+//                return Windows_Kinect_Body_get_HandLeftState(_pNative);
+//            }
+//        }
 
         [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
         private static extern Windows.Kinect.TrackingConfidence Windows_Kinect_Body_get_HandRightConfidence(RootSystem.IntPtr pNative);
@@ -204,20 +204,20 @@ namespace Windows.Kinect
             }
         }
 
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern Windows.Kinect.HandState Windows_Kinect_Body_get_HandRightState(RootSystem.IntPtr pNative);
-        public  Windows.Kinect.HandState HandRightState
-        {
-            get
-            {
-                if (_pNative == RootSystem.IntPtr.Zero)
-                {
-                    throw new RootSystem.ObjectDisposedException("Body");
-                }
-
-                return Windows_Kinect_Body_get_HandRightState(_pNative);
-            }
-        }
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern Windows.Kinect.HandState Windows_Kinect_Body_get_HandRightState(RootSystem.IntPtr pNative);
+//        public  Windows.Kinect.HandState HandRightState
+//        {
+//            get
+//            {
+//                if (_pNative == RootSystem.IntPtr.Zero)
+//                {
+//                    throw new RootSystem.ObjectDisposedException("Body");
+//                }
+//
+//                return Windows_Kinect_Body_get_HandRightState(_pNative);
+//            }
+//        }
 
         [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
         private static extern bool Windows_Kinect_Body_get_IsRestricted(RootSystem.IntPtr pNative);
