@@ -31,3 +31,7 @@ sysinfo.txt
 
 # OS X
 .DS_Store
+
+# Build
+*_Data
+*.exe
