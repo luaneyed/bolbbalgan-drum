@@ -114,8 +114,14 @@ public class BodySourceView : MonoBehaviour
         for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
         {
             GameObject jointObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            jointObj.GetComponent<BoxCollider>().isTrigger = true;
-            jointObj.AddComponent<Rigidbody>().isKinematic = true;
+
+            if (jt != Kinect.JointType.HandTipLeft && jt != Kinect.JointType.HandTipRight)
+            {
+                continue;
+            } else
+            {
+                jointObj.AddComponent<CustomCollider1>();
+            }
 
             LineRenderer lr = jointObj.AddComponent<LineRenderer>();
             lr.SetVertexCount(2);
@@ -134,6 +140,11 @@ public class BodySourceView : MonoBehaviour
     {
         for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
         {
+            if (jt != Kinect.JointType.HandTipLeft && jt != Kinect.JointType.HandTipRight)
+            {
+                continue;
+            }
+
             Kinect.Joint sourceJoint = body.Joints[jt];
             Kinect.Joint? targetJoint = null;
             
