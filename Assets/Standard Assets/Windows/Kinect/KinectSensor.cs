@@ -29,28 +29,28 @@ namespace Windows.Kinect
         [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
         private static extern void Windows_Kinect_KinectSensor_AddRefObject(ref RootSystem.IntPtr pNative);
 
-        // Public Properties
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern RootSystem.IntPtr Windows_Kinect_KinectSensor_get_AudioSource(RootSystem.IntPtr pNative);
-        public  Windows.Kinect.AudioSource AudioSource
-        {
-            get
-            {
-                if (_pNative == RootSystem.IntPtr.Zero)
-                {
-                    throw new RootSystem.ObjectDisposedException("KinectSensor");
-                }
-
-                RootSystem.IntPtr objectPointer = Windows_Kinect_KinectSensor_get_AudioSource(_pNative);
-                Helper.ExceptionHelper.CheckLastError();
-                if (objectPointer == RootSystem.IntPtr.Zero)
-                {
-                    return null;
-                }
-
-                return Helper.NativeObjectCache.CreateOrGetObject<Windows.Kinect.AudioSource>(objectPointer, n => new Windows.Kinect.AudioSource(n));
-            }
-        }
+//        // Public Properties
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern RootSystem.IntPtr Windows_Kinect_KinectSensor_get_AudioSource(RootSystem.IntPtr pNative);
+//        public  Windows.Kinect.AudioSource AudioSource
+//        {
+//            get
+//            {
+//                if (_pNative == RootSystem.IntPtr.Zero)
+//                {
+//                    throw new RootSystem.ObjectDisposedException("KinectSensor");
+//                }
+//
+//                RootSystem.IntPtr objectPointer = Windows_Kinect_KinectSensor_get_AudioSource(_pNative);
+//                Helper.ExceptionHelper.CheckLastError();
+//                if (objectPointer == RootSystem.IntPtr.Zero)
+//                {
+//                    return null;
+//                }
+//
+//                return Helper.NativeObjectCache.CreateOrGetObject<Windows.Kinect.AudioSource>(objectPointer, n => new Windows.Kinect.AudioSource(n));
+//            }
+//        }
 
         [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
         private static extern RootSystem.IntPtr Windows_Kinect_KinectSensor_get_BodyFrameSource(RootSystem.IntPtr pNative);
@@ -96,27 +96,27 @@ namespace Windows.Kinect
             }
         }
 
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern RootSystem.IntPtr Windows_Kinect_KinectSensor_get_ColorFrameSource(RootSystem.IntPtr pNative);
-        public  Windows.Kinect.ColorFrameSource ColorFrameSource
-        {
-            get
-            {
-                if (_pNative == RootSystem.IntPtr.Zero)
-                {
-                    throw new RootSystem.ObjectDisposedException("KinectSensor");
-                }
-
-                RootSystem.IntPtr objectPointer = Windows_Kinect_KinectSensor_get_ColorFrameSource(_pNative);
-                Helper.ExceptionHelper.CheckLastError();
-                if (objectPointer == RootSystem.IntPtr.Zero)
-                {
-                    return null;
-                }
-
-                return Helper.NativeObjectCache.CreateOrGetObject<Windows.Kinect.ColorFrameSource>(objectPointer, n => new Windows.Kinect.ColorFrameSource(n));
-            }
-        }
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern RootSystem.IntPtr Windows_Kinect_KinectSensor_get_ColorFrameSource(RootSystem.IntPtr pNative);
+//        public  Windows.Kinect.ColorFrameSource ColorFrameSource
+//        {
+//            get
+//            {
+//                if (_pNative == RootSystem.IntPtr.Zero)
+//                {
+//                    throw new RootSystem.ObjectDisposedException("KinectSensor");
+//                }
+//
+//                RootSystem.IntPtr objectPointer = Windows_Kinect_KinectSensor_get_ColorFrameSource(_pNative);
+//                Helper.ExceptionHelper.CheckLastError();
+//                if (objectPointer == RootSystem.IntPtr.Zero)
+//                {
+//                    return null;
+//                }
+//
+//                return Helper.NativeObjectCache.CreateOrGetObject<Windows.Kinect.ColorFrameSource>(objectPointer, n => new Windows.Kinect.ColorFrameSource(n));
+//            }
+//        }
 
         [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
         private static extern RootSystem.IntPtr Windows_Kinect_KinectSensor_get_CoordinateMapper(RootSystem.IntPtr pNative);
@@ -162,27 +162,27 @@ namespace Windows.Kinect
             }
         }
 
-        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
-        private static extern RootSystem.IntPtr Windows_Kinect_KinectSensor_get_InfraredFrameSource(RootSystem.IntPtr pNative);
-        public  Windows.Kinect.InfraredFrameSource InfraredFrameSource
-        {
-            get
-            {
-                if (_pNative == RootSystem.IntPtr.Zero)
-                {
-                    throw new RootSystem.ObjectDisposedException("KinectSensor");
-                }
-
-                RootSystem.IntPtr objectPointer = Windows_Kinect_KinectSensor_get_InfraredFrameSource(_pNative);
-                Helper.ExceptionHelper.CheckLastError();
-                if (objectPointer == RootSystem.IntPtr.Zero)
-                {
-                    return null;
-                }
-
-                return Helper.NativeObjectCache.CreateOrGetObject<Windows.Kinect.InfraredFrameSource>(objectPointer, n => new Windows.Kinect.InfraredFrameSource(n));
-            }
-        }
+//        [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
+//        private static extern RootSystem.IntPtr Windows_Kinect_KinectSensor_get_InfraredFrameSource(RootSystem.IntPtr pNative);
+//        public  Windows.Kinect.InfraredFrameSource InfraredFrameSource
+//        {
+//            get
+//            {
+//                if (_pNative == RootSystem.IntPtr.Zero)
+//                {
+//                    throw new RootSystem.ObjectDisposedException("KinectSensor");
+//                }
+//
+//                RootSystem.IntPtr objectPointer = Windows_Kinect_KinectSensor_get_InfraredFrameSource(_pNative);
+//                Helper.ExceptionHelper.CheckLastError();
+//                if (objectPointer == RootSystem.IntPtr.Zero)
+//                {
+//                    return null;
+//                }
+//
+//                return Helper.NativeObjectCache.CreateOrGetObject<Windows.Kinect.InfraredFrameSource>(objectPointer, n => new Windows.Kinect.InfraredFrameSource(n));
+//            }
+//        }
 
         [RootSystem.Runtime.InteropServices.DllImport("KinectUnityAddin", CallingConvention=RootSystem.Runtime.InteropServices.CallingConvention.Cdecl, SetLastError=true)]
         private static extern bool Windows_Kinect_KinectSensor_get_IsAvailable(RootSystem.IntPtr pNative);
