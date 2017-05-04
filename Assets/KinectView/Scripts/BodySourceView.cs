@@ -115,12 +115,14 @@ public class BodySourceView : MonoBehaviour
         {
             GameObject jointObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
-            if (jt != Kinect.JointType.HandTipLeft && jt != Kinect.JointType.HandTipRight)
+
+            if (jt == Kinect.JointType.HandTipLeft || jt == Kinect.JointType.HandTipRight)
             {
-                continue;
+                //jointObj.AddComponent<CustomCollider1>();
+                 jointObj.AddComponent<Rigidbody>().isKinematic = true;
             } else
             {
-                jointObj.AddComponent<CustomCollider1>();
+                jointObj.GetComponent<BoxCollider>().enabled = false;
             }
 
             LineRenderer lr = jointObj.AddComponent<LineRenderer>();
@@ -140,11 +142,6 @@ public class BodySourceView : MonoBehaviour
     {
         for (Kinect.JointType jt = Kinect.JointType.SpineBase; jt <= Kinect.JointType.ThumbRight; jt++)
         {
-            if (jt != Kinect.JointType.HandTipLeft && jt != Kinect.JointType.HandTipRight)
-            {
-                continue;
-            }
-
             Kinect.Joint sourceJoint = body.Joints[jt];
             Kinect.Joint? targetJoint = null;
             
@@ -185,8 +182,13 @@ public class BodySourceView : MonoBehaviour
         }
     }
     
-    private static Vector3 GetVector3FromJoint(Kinect.Joint joint)
+    public static Vector3 GetVector3FromJoint(Kinect.Joint joint)
     {
-        return new Vector3(joint.Position.X * 10, joint.Position.Y * 10, joint.Position.Z * 10);
+        float x, y, z;
+        x = joint.Position.X;
+        y = joint.Position.Y;
+        z = joint.Position.Z;
+
+        return new Vector3(-joint.Position.X * 10, joint.Position.Y * 10, joint.Position.Z * 10);
     }
 }
