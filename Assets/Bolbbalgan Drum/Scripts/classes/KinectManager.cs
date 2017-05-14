@@ -37,7 +37,9 @@ public class KinectManager {
         if (_Reader == null) ExitWithLog("Fail to load multiframe source reader.");
 
         DepthFrameDesc = _Sensor.DepthFrameSource.FrameDescription;
-        DepthData = new ushort[DepthFrameDesc.LengthInPixels * DepthFrameDesc.BytesPerPixel];
+        Mapper = _Sensor.CoordinateMapper;
+
+        DepthData = new ushort[DepthFrameDesc.LengthInPixels];
         _BodyData = new Kinect.Body[_Sensor.BodyFrameSource.BodyCount];
 
         if(!_Sensor.IsOpen)
@@ -56,15 +58,27 @@ public class KinectManager {
         }
 
         Kinect.DepthFrame depthFrame = frame.DepthFrameReference.AcquireFrame();
+
+        if(depthFrame == null) { return Status.ZeroBody; }
+
         depthFrame.CopyFrameDataToArray(DepthData);
+        depthFrame.Dispose();
+        depthFrame = null;
 
         Kinect.BodyFrame bodyFrame = frame.BodyFrameReference.AcquireFrame();
+        
+        if (bodyFrame == null) { return Status.ZeroBody; }
+
+        Debug.Break();
         bodyFrame.GetAndRefreshBodyData(_BodyData);
+        bodyFrame.Dispose();
+        bodyFrame = null;
 
         int bodyIdx;
         Status status;
         checkTrackedBody(out bodyIdx, out status);
-        JointData = _BodyData[bodyIdx].Joints;
+        if(status!=Status.ZeroBody)
+            JointData = _BodyData[bodyIdx].Joints;
 
         return status;
     }
@@ -99,7 +113,7 @@ public class KinectManager {
     static public void ExitWithLog(string log)
     {
         Debug.LogError(log);
-        Debug.Log(UnityEngine.StackTraceUtility.ExtractStackTrace());
+        Debug.LogError(UnityEngine.StackTraceUtility.ExtractStackTrace());
         Application.Quit();
     }
 }
