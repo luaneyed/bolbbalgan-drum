@@ -9,6 +9,9 @@ public class StickRecognizer {
     private Kinect.CameraSpacePoint _LeftTipCache, _RightTipCache;
     private int _LeftCacheElapsedFrame, _RightCacheElapsedFrame;
 
+    private GameObject debugPlane;
+    private Texture2D debugTexture;
+
     public StickRecognizer(KinectManager manager)
     {
         _Width = manager.DepthFrameDesc.Width;
@@ -17,6 +20,9 @@ public class StickRecognizer {
         _RightTipCache = new Kinect.CameraSpacePoint();
         _LeftCacheElapsedFrame = 10;
         _RightCacheElapsedFrame = 10;
+
+        debugPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        debugTexture = new Texture2D(manager.DepthFrameDesc.Width, manager.DepthFrameDesc.Height, TextureFormat.RGB24, false);
     }
 
     public void FindTip(KinectManager manager,
@@ -79,6 +85,28 @@ public class StickRecognizer {
 
             rightStatus = true;
         }
+
+        ushort[] depthData = manager.DepthData;
+        DrawDebugImg(manager, leftStickEndIdx, rightStickEndIdx);
+    }
+
+    private void DrawDebugImg(KinectManager manager, int leftIdx, int rightIdx)
+    {
+        byte[] colorData = new byte[3*manager.DepthData.Length];
+        float depthLimt = 1000*manager.JointData[Kinect.JointType.SpineBase].Position.Z;
+
+        for(int i = 0; i < manager.DepthData.Length; i++)
+        {
+            if (manager.DepthData[i] < depthLimt)
+                colorData[3*i] = (byte) (255*(manager.DepthData[i] / depthLimt));
+        }
+
+        colorData[3 * leftIdx + 1] = 255;
+        colorData[3 * rightIdx + 1] = 255;
+
+        debugTexture.LoadRawTextureData(colorData);
+        debugTexture.Apply();
+        debugPlane.GetComponent<Renderer>().material.mainTexture = debugTexture;
     }
 
     private int GetStickEnd(ushort[] depthData, Kinect.CameraSpacePoint handCameraPoint, Kinect.DepthSpacePoint handDepthPoint)

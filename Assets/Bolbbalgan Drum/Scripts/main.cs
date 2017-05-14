@@ -11,7 +11,7 @@ public class main : MonoBehaviour {
     void Start () {
         _KinectManager = new KinectManager();
         _StickRecognizer = new StickRecognizer(_KinectManager);
-	}
+    }
 	
 	void Update () {
         KinectManager.Status status = _KinectManager.Update();
@@ -29,12 +29,6 @@ public class main : MonoBehaviour {
         bool leftStatus, rightStatus;
         Kinect.CameraSpacePoint leftTip, rightTip;
         _StickRecognizer.FindTip(_KinectManager, out leftTip, out rightTip, out leftStatus, out rightStatus);
-        
-        if(leftStatus && rightStatus)
-        {
-            Debug.Log(leftTip.ToString());
-            Debug.Log(rightTip.ToString());
-        }
 
         // MotionAnalyser
         // SoundManger

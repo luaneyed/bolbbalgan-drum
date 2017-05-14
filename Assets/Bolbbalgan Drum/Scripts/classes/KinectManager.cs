@@ -68,8 +68,7 @@ public class KinectManager {
         Kinect.BodyFrame bodyFrame = frame.BodyFrameReference.AcquireFrame();
         
         if (bodyFrame == null) { return Status.ZeroBody; }
-
-        Debug.Break();
+        
         bodyFrame.GetAndRefreshBodyData(_BodyData);
         bodyFrame.Dispose();
         bodyFrame = null;
