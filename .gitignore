@@ -35,3 +35,76 @@ sysinfo.txt
 # Build
 *_Data
 *.exe
+
+# Custom
+.meta
+
+# =============== #
+
+# Unity generated #
+
+# =============== #
+
+Temp/
+
+Obj/
+
+UnityGenerated/
+
+Library/
+
+
+
+# ===================================== #
+
+# Visual Studio / MonoDevelop generated #
+
+# ===================================== #
+
+ExportedObj/
+
+*.svd
+
+*.userprefs
+
+*.csproj
+
+*.pidb
+
+*.suo
+
+*.sln
+
+*.user
+
+*.unityproj
+
+*.booproj
+
+
+
+# ============ #
+
+# OS generated #
+
+# ============ #
+
+.DS_Store
+
+.DS_Store?
+
+._*
+
+.Spotlight-V100
+
+.Trashes
+
+Icon?
+
+ehthumbs.db
+
+Thumbs.db
+
+
+
+출처: http://maruti.tistory.com/9 [◁- 디자인/프로그래밍 공방 -▷]
