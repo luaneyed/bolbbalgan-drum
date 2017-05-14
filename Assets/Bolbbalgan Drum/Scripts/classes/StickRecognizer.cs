@@ -103,7 +103,7 @@ public class StickRecognizer {
 
         ushort curDep = depthData[start];
         if (curDep == 0) {
-            return
+            return;
         }
 
         int x = start % _Width;
@@ -114,16 +114,17 @@ public class StickRecognizer {
 
         if (len > 2500) {   //  (x, y) should be out of hand
             float slope = (float)(handIndY - y) / (x - handIndX);
-            float angle = Mathf.atan(slope);
-            float distance = 15
-            float dx = (int)(distance * Mathf.cos(angle));
-            float dy = (int)(distance * Mathf.sin(angle));
+            float angle = Mathf.Atan(slope);
+            float distance = 15;
+            int dx = (int)(distance * Mathf.Cos(angle));
+            int dy = (int)(distance * Mathf.Sin(angle));
 
-            System.Func<int, int, bool> isBadNeighbor = (x, y) => {
-                return validateDepthPosition(x, y) && Mathf.Abs(depthData[Pos2Idx(x, y)] - curDep) <= threshold
-            }
+            System.Func<int, int, bool> isBadNeighbor = (X, Y) =>
+            {
+                return validateDepthPosition(X, Y) && Mathf.Abs(depthData[Pos2Idx(X, Y)] - curDep) <= threshold;
+            };
             if (isBadNeighbor(x + dx, y + dy) || isBadNeighbor(x - dx, y - dy)) {
-                return
+                return;
             }
         }
 
@@ -136,20 +137,28 @@ public class StickRecognizer {
 
         int walk = 1;
 
-        System.Func<int, int, bool> depthCondition = (newX, newY) => { return Mathf.Abs(depthData[Pos2Idx(newX, newY)] - curDep) < threshold; };
-        System.Action<int, int> traverse = (newX, newY) => {
-            if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
-                DFS_helper(depthData, Pos2Idx(newX, newY), ref max, ref maxX, ref maxY, ref visited, handIndX, handIndY);
-        }
+        System.Func<int, int, bool> depthCondition = (X, Y) => { return Mathf.Abs(depthData[Pos2Idx(X, Y)] - curDep) < threshold; };
 
-        traverse(x + walk, y);
-        traverse(x - walk, y);
-        traverse(x, y + walk);
-        traverse(x, y - walk);
+        int newX = x + walk, newY = y;
+        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
+            DFS_helper(depthData, Pos2Idx(newX, newY), ref max, ref maxX, ref maxY, ref visited, handIndX, handIndY);
+
+        newX = x - walk;
+        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
+            DFS_helper(depthData, Pos2Idx(newX, newY), ref max, ref maxX, ref maxY, ref visited, handIndX, handIndY);
+
+        newX = x;
+        newY = y + walk;
+        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
+            DFS_helper(depthData, Pos2Idx(newX, newY), ref max, ref maxX, ref maxY, ref visited, handIndX, handIndY);
+
+        newY = y - walk;
+        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
+            DFS_helper(depthData, Pos2Idx(newX, newY), ref max, ref maxX, ref maxY, ref visited, handIndX, handIndY);
     }
 
     private bool validateDepthPosition(int x, int y) {
-        return x >= 0 && x < _Width && y >0 0 && y <= _Height
+        return x >= 0 && x < _Width && y > 0 && y <= _Height;
     }
 
     private int Pos2Idx(int x, int y)
