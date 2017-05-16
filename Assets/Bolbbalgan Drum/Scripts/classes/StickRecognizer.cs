@@ -5,13 +5,13 @@ using UnityEngine;
 using Kinect = Windows.Kinect;
 
 struct DFS_Datas {
-    ushort[] depthData;
-    float max;
-    int maxX;
-    int maxY;
-    HashSet<int> visited;
-    int handIndX;
-    int handIndY;
+    public ushort[] depthData;
+    public float max;
+    public int maxX;
+    public int maxY;
+    public HashSet<int> visited;
+    public int handIndX;
+    public int handIndY;
 }
 
 public class StickRecognizer {
@@ -224,56 +224,63 @@ public class StickRecognizer {
 
     private int DFS(ushort[] depthData, int x, int y, ref byte[] colorData)
     {
-        HashSet<int> visited = new HashSet<int>();
-        float max = 0;
-        int maxX = 0, maxY = 0;
-        
-        DFS_Datas datas = {
+        DFS_Datas datas;
+        datas.depthData = depthData;
+        datas.max = 0;
+        datas.maxX = 0;
+        datas.maxY = 0;
+        datas.visited = new HashSet<int>();
+        datas.handIndX = x;
+        datas.handIndY = y;
+
+        /*
+        DFS_Datas datas = DFS_Datas {
             depthData,
             max,
             maxX,
             maxY,
             visited,
-            0,
-            0,
-        }
+            x,
+            y,
+        };
+        */
 
         DFS_helper(ref datas, Pos2Idx(x, y));
 
-        if (max == 0) {
-            datas.handIndX = 1;
-            DFS_helper(ref datas, Pos2Idx(x, y));
+        if (datas.max == 0) {
+            datas.handIndX = x + 1;
+            DFS_helper(ref datas, Pos2Idx(x + 1, y));
         }
-        if (max == 0) {
+        if (datas.max == 0) {
+            datas.handIndX = x - 1;
+            DFS_helper(ref datas, Pos2Idx(x - 1, y));
+        }
+        if (datas.max == 0) {
+            datas.handIndX = x;
+            datas.handIndY = y +1;
+            DFS_helper(ref datas, Pos2Idx(x, y + 1));
+        }
+        if (datas.max == 0) {
+            datas.handIndY = y - 1;
+            DFS_helper(ref datas, Pos2Idx(x, y - 1));
+        }
+        if (datas.max == 0) {
+            datas.handIndX = x + 1;
+            DFS_helper(ref datas, Pos2Idx(x + 1, y - 1));
+        }
+        if (datas.max == 0) {
             datas.handIndX = -1;
-            DFS_helper(ref datas, Pos2Idx(x, y));
+            DFS_helper(ref datas, Pos2Idx(x - 1, y - 1));
         }
-        if (max == 0) {
-            datas.handIndX = 0;
+        if (datas.max == 0) {
             datas.handIndY = 1;
-            DFS_helper(ref datas, Pos2Idx(x, y));
+            DFS_helper(ref datas, Pos2Idx(x - 1, y + 1));
         }
-        if (max == 0) {
-            datas.handIndY = -1;
-            DFS_helper(ref datas, Pos2Idx(x, y));
-        }
-        if (max == 0) {
+        if (datas.max == 0) {
             datas.handIndX = 1;
-            DFS_helper(ref datas, Pos2Idx(x, y));
+            DFS_helper(ref datas, Pos2Idx(x + 1, y + 1));
         }
-        if (max == 0) {
-            datas.handIndX = -1;
-            DFS_helper(ref datas, Pos2Idx(x, y));
-        }
-        if (max == 0) {
-            datas.handIndY = 1;
-            DFS_helper(ref datas, Pos2Idx(x, y));
-        }
-        if (max == 0) {
-            datas.handIndX = 1;
-            DFS_helper(ref datas, Pos2Idx(x, y));
-        }
-        
+
         /*for (int i = 0; i < depthData.Length; i ++)
         {
             if (visited.Contains(i))
@@ -285,7 +292,8 @@ public class StickRecognizer {
         debugTexture.Apply();
         debugPlane.GetComponent<Renderer>().material.mainTexture = debugTexture;*/
 
-        return Pos2Idx(maxX, maxY);
+        Debug.Log(datas.max);
+        return Pos2Idx(datas.maxX, datas.maxY);
     }
 
     private void DFS_helper(ref DFS_Datas datas, int start)
@@ -300,15 +308,22 @@ public class StickRecognizer {
         int x = start % _Width;
         int y = start / _Width;
 
-        float len = getDistanceWithDepthSpacePoint(Kinect.DepthSpacePoint(x, y), Kinect.DepthSpacePoint(datas.handIndX, datas.handIndY), datas.depthData)
+        Kinect.DepthSpacePoint curDSP = new Kinect.DepthSpacePoint();
+        curDSP.X = x;
+        curDSP.Y = y;
+        Kinect.DepthSpacePoint handDSP = new Kinect.DepthSpacePoint();
+        handDSP.X = datas.handIndX;
+        handDSP.Y = datas.handIndY;
+        float len = getDistanceWithDepthSpacePoint(curDSP, handDSP, datas.depthData);
 
-        /*if (len > 700) {   //  (x, y) should be out of hand
-            float slope = (float)(handIndY - y) / (x - handIndX);
+        if (len > 0.15) {
+            float slope = (float)(datas.handIndY - y) / (x - datas.handIndX);
             float angle = Mathf.Atan(slope);
-            float distance = 35;
+            float distance = 30;
             int dx = (int)(distance * Mathf.Cos(angle));
             int dy = (int)(distance * Mathf.Sin(angle));
-            int outThreshold = 600;
+            int outThreshold = 400;
+            ushort[] depthData = datas.depthData;
             System.Func<int, int, bool> isBadNeighbor = (X, Y) =>
             {
                 return validateDepthPosition(X, Y) && Mathf.Abs(depthData[Pos2Idx(X, Y)] - curDep) <= outThreshold;
@@ -316,7 +331,7 @@ public class StickRecognizer {
             if (isBadNeighbor(x + dx, y + dy) || isBadNeighbor(x - dx, y - dy)) {
                 return;
             }
-        }*/
+        }
 
         if (len > datas.max)
         {
@@ -360,8 +375,8 @@ public class StickRecognizer {
 
     private float getDistanceWithDepthSpacePoint(Kinect.DepthSpacePoint p, Kinect.DepthSpacePoint q, ushort[] depthData)
     {
-        Kinect.CameraSpacePoint P = _Mapper.MapDepthPointToCameraSpace(p, depthData(p))
-        Kinect.CameraSpacePoint Q = _Mapper.MapDepthPointToCameraSpace(q, depthData(q))
+        Kinect.CameraSpacePoint P = _Mapper.MapDepthPointToCameraSpace(p, depthData[Pos2Idx((int)p.X, (int)p.Y)]);
+        Kinect.CameraSpacePoint Q = _Mapper.MapDepthPointToCameraSpace(q, depthData[Pos2Idx((int)q.X, (int)q.Y)]);
 
         return Mathf.Sqrt((P.X - Q.X) * (P.X - Q.X) + (P.Y - Q.Y) * (P.Y - Q.Y) + (P.Z - Q.Z) * (P.Z - Q.Z));
     }
