@@ -4,6 +4,16 @@ using UnityEngine;
 
 using Kinect = Windows.Kinect;
 
+struct DFS_Datas {
+    ushort[] depthData;
+    float max;
+    int maxX;
+    int maxY;
+    HashSet<int> visited;
+    int handIndX;
+    int handIndY;
+}
+
 public class StickRecognizer {
     private int _Width, _Height;
     private Kinect.CameraSpacePoint _LeftTipCache, _RightTipCache;
@@ -207,32 +217,51 @@ public class StickRecognizer {
         HashSet<int> visited = new HashSet<int>();
         float max = 0;
         int maxX = 0, maxY = 0;
+        
+        DFS_Datas datas = {
+            depthData,
+            max,
+            maxX,
+            maxY,
+            visited,
+            0,
+            0,
+        }
 
-        DFS_helper(depthData, Pos2Idx(x, y), ref max, ref maxX, ref maxY, ref visited, x, y);
+        DFS_helper(ref datas, Pos2Idx(x, y));
 
         if (max == 0) {
-            DFS_helper(depthData, Pos2Idx(x + 1, y), ref max, ref maxX, ref maxY, ref visited, x + 1, y);
+            datas.handIndX = 1;
+            DFS_helper(ref datas, Pos2Idx(x, y));
         }
         if (max == 0) {
-            DFS_helper(depthData, Pos2Idx(x - 1, y), ref max, ref maxX, ref maxY, ref visited, x - 1, y);
+            datas.handIndX = -1;
+            DFS_helper(ref datas, Pos2Idx(x, y));
         }
         if (max == 0) {
-            DFS_helper(depthData, Pos2Idx(x, y + 1), ref max, ref maxX, ref maxY, ref visited, x, y + 1);
+            datas.handIndX = 0;
+            datas.handIndY = 1;
+            DFS_helper(ref datas, Pos2Idx(x, y));
         }
         if (max == 0) {
-            DFS_helper(depthData, Pos2Idx(x, y - 1), ref max, ref maxX, ref maxY, ref visited, x, y - 1);
+            datas.handIndY = -1;
+            DFS_helper(ref datas, Pos2Idx(x, y));
         }
         if (max == 0) {
-            DFS_helper(depthData, Pos2Idx(x + 1, y + 1), ref max, ref maxX, ref maxY, ref visited, x + 1, y + 1);
+            datas.handIndX = 1;
+            DFS_helper(ref datas, Pos2Idx(x, y));
         }
         if (max == 0) {
-            DFS_helper(depthData, Pos2Idx(x + 1, y - 1), ref max, ref maxX, ref maxY, ref visited, x + 1, y - 1);
+            datas.handIndX = -1;
+            DFS_helper(ref datas, Pos2Idx(x, y));
         }
         if (max == 0) {
-            DFS_helper(depthData, Pos2Idx(x - 1, y + 1), ref max, ref maxX, ref maxY, ref visited, x - 1, y + 1);
+            datas.handIndY = 1;
+            DFS_helper(ref datas, Pos2Idx(x, y));
         }
         if (max == 0) {
-            DFS_helper(depthData, Pos2Idx(x - 1, y - 1), ref max, ref maxX, ref maxY, ref visited, x - 1, y - 1);
+            datas.handIndX = 1;
+            DFS_helper(ref datas, Pos2Idx(x, y));
         }
         
         /*for (int i = 0; i < depthData.Length; i ++)
@@ -249,11 +278,11 @@ public class StickRecognizer {
         return Pos2Idx(maxX, maxY);
     }
 
-    private void DFS_helper(ushort[] depthData, int start, ref float max, ref int maxX, ref int maxY, ref HashSet<int> visited, int handIndX, int handIndY)
+    private void DFS_helper(ref DFS_Datas datas, int start)
     {
-        visited.Add(start);
+        datas.visited.Add(start);
 
-        ushort curDep = depthData[start];
+        ushort curDep = datas.depthData[start];
         if (curDep == 0) {
             return;
         }
@@ -261,7 +290,7 @@ public class StickRecognizer {
         int x = start % _Width;
         int y = start / _Width;
 
-        float len = getDistanceWithDepthSpacePoint(Kinect.DepthSpacePoint(x, y), Kinect.DepthSpacePoint(handIndX, handIndY), depthData)
+        float len = getDistanceWithDepthSpacePoint(Kinect.DepthSpacePoint(x, y), Kinect.DepthSpacePoint(datas.handIndX, datas.handIndY), datas.depthData)
 
         /*if (len > 700) {   //  (x, y) should be out of hand
             float slope = (float)(handIndY - y) / (x - handIndX);
@@ -279,11 +308,11 @@ public class StickRecognizer {
             }
         }*/
 
-        if (len > max)
+        if (len > datas.max)
         {
-            max = len;
-            maxX = x;
-            maxY = y;
+            datas.max = len;
+            datas.maxX = x;
+            datas.maxY = y;
         }
 
         int walk = 1;
@@ -293,21 +322,21 @@ public class StickRecognizer {
         System.Func<int, int, bool> depthCondition = (X, Y) => { return true; };
 
         int newX = x + walk, newY = y;
-        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
-            DFS_helper(depthData, Pos2Idx(newX, newY), ref max, ref maxX, ref maxY, ref visited, handIndX, handIndY);
+        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !datas.visited.Contains(Pos2Idx(newX, newY)))
+            DFS_helper(ref datas, Pos2Idx(newX, newY));
 
         newX = x - walk;
-        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
-            DFS_helper(depthData, Pos2Idx(newX, newY), ref max, ref maxX, ref maxY, ref visited, handIndX, handIndY);
+        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !datas.visited.Contains(Pos2Idx(newX, newY)))
+            DFS_helper(ref datas, Pos2Idx(newX, newY));
 
         newX = x;
         newY = y + walk;
-        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
-            DFS_helper(depthData, Pos2Idx(newX, newY), ref max, ref maxX, ref maxY, ref visited, handIndX, handIndY);
+        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !datas.visited.Contains(Pos2Idx(newX, newY)))
+            DFS_helper(ref datas, Pos2Idx(newX, newY));
 
         newY = y - walk;
-        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
-            DFS_helper(depthData, Pos2Idx(newX, newY), ref max, ref maxX, ref maxY, ref visited, handIndX, handIndY);
+        if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !datas.visited.Contains(Pos2Idx(newX, newY)))
+            DFS_helper(ref datas, Pos2Idx(newX, newY));
     }
 
     private bool validateDepthPosition(int x, int y) {
