@@ -29,13 +29,14 @@ public class main : MonoBehaviour {
         }
 
         bool leftStatus, rightStatus;
+        ushort leftDepth, rightDepth;
         Kinect.CameraSpacePoint leftTip, rightTip;
-        _StickRecognizer.FindTip(_KinectManager, out leftTip, out rightTip, out leftStatus, out rightStatus);
+        _StickRecognizer.FindTip(_KinectManager, out leftTip, out rightTip, out leftStatus, out rightStatus, out leftDepth, out rightDepth);
 
         if(leftStatus && rightStatus)
         {
             //_DisplayManager.DrawBody(_KinectManager);
-            _DisplayManager.DisplayPlayer(_KinectManager, leftTip, rightTip);
+            _DisplayManager.DisplayPlayer(_KinectManager, leftTip, rightTip, leftDepth, rightDepth);
         }
         // MotionAnalyser
         // SoundManger
