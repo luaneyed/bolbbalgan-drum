@@ -208,6 +208,30 @@ public class StickRecognizer {
 
         DFS_helper(depthData, Pos2Idx(x, y), ref max, ref maxX, ref maxY, ref visited, x, y);
 
+        if (max == 0) {
+            DFS_helper(depthData, Pos2Idx(x + 1, y), ref max, ref maxX, ref maxY, ref visited, x + 1, y);
+        }
+        if (max == 0) {
+            DFS_helper(depthData, Pos2Idx(x - 1, y), ref max, ref maxX, ref maxY, ref visited, x - 1, y);
+        }
+        if (max == 0) {
+            DFS_helper(depthData, Pos2Idx(x, y + 1), ref max, ref maxX, ref maxY, ref visited, x, y + 1);
+        }
+        if (max == 0) {
+            DFS_helper(depthData, Pos2Idx(x, y - 1), ref max, ref maxX, ref maxY, ref visited, x, y - 1);
+        }
+        if (max == 0) {
+            DFS_helper(depthData, Pos2Idx(x + 1, y + 1), ref max, ref maxX, ref maxY, ref visited, x + 1, y + 1);
+        }
+        if (max == 0) {
+            DFS_helper(depthData, Pos2Idx(x + 1, y - 1), ref max, ref maxX, ref maxY, ref visited, x + 1, y - 1);
+        }
+        if (max == 0) {
+            DFS_helper(depthData, Pos2Idx(x - 1, y + 1), ref max, ref maxX, ref maxY, ref visited, x - 1, y + 1);
+        }
+        if (max == 0) {
+            DFS_helper(depthData, Pos2Idx(x - 1, y - 1), ref max, ref maxX, ref maxY, ref visited, x - 1, y - 1);
+        }
         
         /*for (int i = 0; i < depthData.Length; i ++)
         {
