@@ -33,12 +33,26 @@ public class StickRecognizer {
         Kinect.DepthSpacePoint leftHandDepthPoint = manager.Mapper.MapCameraPointToDepthSpace(leftHandCameraPoint);
         Kinect.CameraSpacePoint rightHandCameraPoint = manager.JointData[Kinect.JointType.HandRight].Position;
         Kinect.DepthSpacePoint rightHandDepthPoint = manager.Mapper.MapCameraPointToDepthSpace(rightHandCameraPoint);
+        byte[] colorData = new byte[3 * manager.DepthData.Length];
 
-        int leftStickEndIdx = GetStickEnd(manager.DepthData, leftHandCameraPoint, leftHandDepthPoint);
-        if(leftStickEndIdx == 0)
+        ushort[] tempDepthData = new ushort[manager.DepthData.Length];
+        tempDepthData = (ushort[])manager.DepthData.Clone();
+ 
+
+        for(int i = 0; i < tempDepthData.Length; i++)
+        {
+            if (tempDepthData[i] > (tempDepthData[Pos2Idx((int)leftHandDepthPoint.X, (int)leftHandDepthPoint.Y)] + 100))
+            {
+                tempDepthData[i] = 0;
+            }
+        }
+
+        //int leftStickEndIdx = GetStickEnd(manager.DepthData, leftHandCameraPoint, leftHandDepthPoint);
+        int leftStickEndIdx = GetStickEnd(tempDepthData, leftHandCameraPoint, leftHandDepthPoint, ref colorData);
+        if (leftStickEndIdx == 0)
         {
             leftTipCameraPoint = _LeftTipCache;
-            if (_LeftCacheElapsedFrame == 10)
+            if (_LeftCacheElapsedFrame >= 10)
             {
                 leftStatus = false;
             } else
@@ -59,11 +73,22 @@ public class StickRecognizer {
             leftStatus = true;
         }
 
-        int rightStickEndIdx = GetStickEnd(manager.DepthData, rightHandCameraPoint, rightHandDepthPoint);
+        tempDepthData = (ushort[])manager.DepthData.Clone();
+
+        for (int i = 0; i < tempDepthData.Length; i++)
+        {
+            if (tempDepthData[i] > (tempDepthData[Pos2Idx((int)rightHandDepthPoint.X, (int)rightHandDepthPoint.Y)] + 100))
+            {
+                tempDepthData[i] = 0;
+            }
+        }
+
+        //int rightStickEndIdx = GetStickEnd(manager.DepthData, rightHandCameraPoint, rightHandDepthPoint);
+        int rightStickEndIdx = GetStickEnd(tempDepthData, rightHandCameraPoint, rightHandDepthPoint, ref colorData);
         if (rightStickEndIdx == 0)
         {
             rightTipCameraPoint = _RightTipCache;
-            if (_RightCacheElapsedFrame == 10)
+            if (_RightCacheElapsedFrame >= 10)
             {
                 rightStatus = false;
             }
@@ -80,11 +105,13 @@ public class StickRecognizer {
             rightTipDepthPoint.Y = rightStickEndIdx / _Width;
             rightTipCameraPoint = manager.Mapper.MapDepthPointToCameraSpace(rightTipDepthPoint, manager.DepthData[rightStickEndIdx]);
 
+
             _RightTipCache = rightTipCameraPoint;
             _RightCacheElapsedFrame = 0;
 
             rightStatus = true;
         }
+
 
         ushort[] depthData = manager.DepthData;
         DrawDebugImg(manager, leftStickEndIdx, rightStickEndIdx);
@@ -101,26 +128,53 @@ public class StickRecognizer {
                 colorData[3*i] = (byte) (255*(manager.DepthData[i] / depthLimt));
         }
 
-        colorData[3 * leftIdx + 1] = 255;
-        colorData[3 * rightIdx + 1] = 255;
+        System.Action<int> colorRed = (idx) =>
+        {
+            colorData[3 * idx + 1] = 255;
+            /*
+            colorData[3 * (idx + 1) + 1] = 255;
+            colorData[3 * (idx - 1) + 1] = 255;
+            colorData[3 * (idx + _Width) + 1] = 255;
+            colorData[3 * (idx - _Width) + 1] = 255;
+            colorData[3 * (idx + _Width + 1) + 1] = 255;
+            colorData[3 * (idx + _Width - 1) + 1] = 255;
+            colorData[3 * (idx - _Width + 1) + 1] = 255;
+            colorData[3 * (idx - _Width - 1) + 1] = 255;
+            */
+
+        };
+        colorRed(leftIdx);
+        colorRed(rightIdx);
 
         debugTexture.LoadRawTextureData(colorData);
         debugTexture.Apply();
         debugPlane.GetComponent<Renderer>().material.mainTexture = debugTexture;
     }
 
-    private int GetStickEnd(ushort[] depthData, Kinect.CameraSpacePoint handCameraPoint, Kinect.DepthSpacePoint handDepthPoint)
+    private int GetStickEnd(ushort[] depthData, Kinect.CameraSpacePoint handCameraPoint, Kinect.DepthSpacePoint handDepthPoint, ref byte[] colorData)
     {
-        return DFS(depthData, (int)handDepthPoint.X, (int)handDepthPoint.Y);
+        return DFS(depthData, (int)handDepthPoint.X, (int)handDepthPoint.Y, ref colorData);
     }
 
-    private int DFS(ushort[] depthData, int x, int y)
+    private int DFS(ushort[] depthData, int x, int y, ref byte[] colorData)
     {
         HashSet<int> visited = new HashSet<int>();
         float max = 0;
         int maxX = 0, maxY = 0;
 
         DFS_helper(depthData, Pos2Idx(x, y), ref max, ref maxX, ref maxY, ref visited, x, y);
+
+        
+        /*for (int i = 0; i < depthData.Length; i ++)
+        {
+            if (visited.Contains(i))
+            {
+                colorData[3 * i] = 255;
+            }
+        }
+        debugTexture.LoadRawTextureData(colorData);
+        debugTexture.Apply();
+        debugPlane.GetComponent<Renderer>().material.mainTexture = debugTexture;*/
 
         return Pos2Idx(maxX, maxY);
     }
@@ -138,23 +192,22 @@ public class StickRecognizer {
         int y = start / _Width;
 
         float len = Length(x, y, handIndX, handIndY);
-        int threshold = 300;
 
-        if (len > 2500) {   //  (x, y) should be out of hand
+        /*if (len > 700) {   //  (x, y) should be out of hand
             float slope = (float)(handIndY - y) / (x - handIndX);
             float angle = Mathf.Atan(slope);
-            float distance = 15;
+            float distance = 35;
             int dx = (int)(distance * Mathf.Cos(angle));
             int dy = (int)(distance * Mathf.Sin(angle));
-
+            int outThreshold = 600;
             System.Func<int, int, bool> isBadNeighbor = (X, Y) =>
             {
-                return validateDepthPosition(X, Y) && Mathf.Abs(depthData[Pos2Idx(X, Y)] - curDep) <= threshold;
+                return validateDepthPosition(X, Y) && Mathf.Abs(depthData[Pos2Idx(X, Y)] - curDep) <= outThreshold;
             };
             if (isBadNeighbor(x + dx, y + dy) || isBadNeighbor(x - dx, y - dy)) {
                 return;
             }
-        }
+        }*/
 
         if (len > max)
         {
@@ -165,7 +218,9 @@ public class StickRecognizer {
 
         int walk = 1;
 
-        System.Func<int, int, bool> depthCondition = (X, Y) => { return Mathf.Abs(depthData[Pos2Idx(X, Y)] - curDep) < threshold; };
+        //int inThreshold = len < 800 ? 1500 : 300;
+        //System.Func<int, int, bool> depthCondition = (X, Y) => { return Mathf.Abs(depthData[Pos2Idx(X, Y)] - curDep) < inThreshold; };
+        System.Func<int, int, bool> depthCondition = (X, Y) => { return true; };
 
         int newX = x + walk, newY = y;
         if (validateDepthPosition(newX, newY) && depthCondition(newX, newY) && !visited.Contains(Pos2Idx(newX, newY)))
@@ -186,7 +241,7 @@ public class StickRecognizer {
     }
 
     private bool validateDepthPosition(int x, int y) {
-        return x >= 0 && x < _Width && y > 0 && y <= _Height;
+        return x >= 0 && x < _Width && y >= 0 && y < _Height;
     }
 
     private int Pos2Idx(int x, int y)

@@ -37,7 +37,8 @@ sysinfo.txt
 *.exe
 
 # Custom
-.meta
+*.meta
+*.mat
 
 # =============== #
 

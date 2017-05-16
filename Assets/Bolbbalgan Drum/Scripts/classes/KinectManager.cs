@@ -20,6 +20,7 @@ public class KinectManager {
     /* Public data from Kinect */
     public ushort[] DepthData { get; private set; }
     public Dictionary<Kinect.JointType, Kinect.Joint> JointData { get; private set; }
+    public Dictionary<Kinect.JointType, Kinect.JointOrientation> JointOriendationData { get; private set; }
 
     /* Data schema */
     public Kinect.FrameDescription DepthFrameDesc{ get; private set; }
@@ -76,8 +77,11 @@ public class KinectManager {
         int bodyIdx;
         Status status;
         checkTrackedBody(out bodyIdx, out status);
-        if(status!=Status.ZeroBody)
+        if (status != Status.ZeroBody)
+        {
             JointData = _BodyData[bodyIdx].Joints;
+            JointOriendationData = _BodyData[bodyIdx].JointOrientations;
+        }
 
         return status;
     }
