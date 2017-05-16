@@ -8,6 +8,7 @@ public class StickRecognizer {
     private int _Width, _Height;
     private Kinect.CameraSpacePoint _LeftTipCache, _RightTipCache;
     private int _LeftCacheElapsedFrame, _RightCacheElapsedFrame;
+    private Kinect.CoordinateMapper _Mapper;
 
     private GameObject debugPlane;
     private Texture2D debugTexture;
@@ -20,6 +21,7 @@ public class StickRecognizer {
         _RightTipCache = new Kinect.CameraSpacePoint();
         _LeftCacheElapsedFrame = 10;
         _RightCacheElapsedFrame = 10;
+        _Mapper = manager.Mapper;
 
         debugPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
         debugTexture = new Texture2D(manager.DepthFrameDesc.Width, manager.DepthFrameDesc.Height, TextureFormat.RGB24, false);
@@ -259,7 +261,7 @@ public class StickRecognizer {
         int x = start % _Width;
         int y = start / _Width;
 
-        float len = Length(x, y, handIndX, handIndY);
+        float len = getDistanceWithDepthSpacePoint(Kinect.DepthSpacePoint(x, y), Kinect.DepthSpacePoint(handIndX, handIndY), depthData)
 
         /*if (len > 700) {   //  (x, y) should be out of hand
             float slope = (float)(handIndY - y) / (x - handIndX);
@@ -317,8 +319,11 @@ public class StickRecognizer {
         return x + y * _Width;
     }
 
-    private float Length(int x1, int y1, int x2, int y2)
+    private float getDistanceWithDepthSpacePoint(Kinect.DepthSpacePoint p, Kinect.DepthSpacePoint q, ushort[] depthData)
     {
-        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+        Kinect.CameraSpacePoint P = _Mapper.MapDepthPointToCameraSpace(p, depthData(p))
+        Kinect.CameraSpacePoint Q = _Mapper.MapDepthPointToCameraSpace(q, depthData(q))
+
+        return Mathf.Sqrt((P.X - Q.X) * (P.X - Q.X) + (P.Y - Q.Y) * (P.Y - Q.Y) + (P.Z - Q.Z) * (P.Z - Q.Z));
     }
 }
