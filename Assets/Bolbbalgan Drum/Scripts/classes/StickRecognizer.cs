@@ -39,7 +39,7 @@ public class StickRecognizer {
 
     public void FindTip(KinectManager manager,
         out Kinect.CameraSpacePoint leftTipCameraPoint, out Kinect.CameraSpacePoint rightTipCameraPoint,
-        out bool leftStatus, out bool rightStatus)
+        out bool leftStatus, out bool rightStatus, out ushort leftDepth, out ushort rightDepth)
     {
         Kinect.CameraSpacePoint leftHandCameraPoint = manager.JointData[Kinect.JointType.HandLeft].Position;
         Kinect.DepthSpacePoint leftHandDepthPoint = manager.Mapper.MapCameraPointToDepthSpace(leftHandCameraPoint);
@@ -49,11 +49,13 @@ public class StickRecognizer {
 
         ushort[] tempDepthData = new ushort[manager.DepthData.Length];
         tempDepthData = (ushort[])manager.DepthData.Clone();
+        leftDepth = 0;
+        rightDepth = 0;
  
 
         for(int i = 0; i < tempDepthData.Length; i++)
         {
-            if (tempDepthData[i] > (tempDepthData[Pos2Idx((int)leftHandDepthPoint.X, (int)leftHandDepthPoint.Y)] + 100))
+            if (tempDepthData[i] > (tempDepthData[Pos2Idx((int)leftHandDepthPoint.X, (int)leftHandDepthPoint.Y)] + 30))
             {
                 tempDepthData[i] = 0;
             }
@@ -77,6 +79,7 @@ public class StickRecognizer {
             Kinect.DepthSpacePoint leftTipDepthPoint = new Kinect.DepthSpacePoint();
             leftTipDepthPoint.X = leftStickEndIdx % _Width;
             leftTipDepthPoint.Y = leftStickEndIdx / _Width;
+            leftDepth = manager.DepthData[leftStickEndIdx];
             leftTipCameraPoint = manager.Mapper.MapDepthPointToCameraSpace(leftTipDepthPoint, manager.DepthData[leftStickEndIdx]);
 
             _LeftTipCache = leftTipCameraPoint;
@@ -89,7 +92,7 @@ public class StickRecognizer {
 
         for (int i = 0; i < tempDepthData.Length; i++)
         {
-            if (tempDepthData[i] > (tempDepthData[Pos2Idx((int)rightHandDepthPoint.X, (int)rightHandDepthPoint.Y)] + 100))
+            if (tempDepthData[i] > (tempDepthData[Pos2Idx((int)rightHandDepthPoint.X, (int)rightHandDepthPoint.Y)] + 30))
             {
                 tempDepthData[i] = 0;
             }
@@ -115,6 +118,7 @@ public class StickRecognizer {
             Kinect.DepthSpacePoint rightTipDepthPoint = new Kinect.DepthSpacePoint();
             rightTipDepthPoint.X = rightStickEndIdx % _Width;
             rightTipDepthPoint.Y = rightStickEndIdx / _Width;
+            rightDepth = manager.DepthData[rightStickEndIdx];
             rightTipCameraPoint = manager.Mapper.MapDepthPointToCameraSpace(rightTipDepthPoint, manager.DepthData[rightStickEndIdx]);
 
 
@@ -159,8 +163,14 @@ public class StickRecognizer {
         colorRed(rightIdx);
 
         debugTexture.LoadRawTextureData(colorData);
+
+        Kinect.DepthSpacePoint leftHand = manager.Mapper.MapCameraPointToDepthSpace(manager.JointData[Kinect.JointType.HandLeft].Position);
+        Kinect.DepthSpacePoint rightHand = manager.Mapper.MapCameraPointToDepthSpace(manager.JointData[Kinect.JointType.HandRight].Position);
+
         DrawLine(debugTexture, leftIdx%manager.DepthFrameDesc.Width, (int) leftIdx/manager.DepthFrameDesc.Width,
-                                rightIdx%manager.DepthFrameDesc.Width, (int) rightIdx/manager.DepthFrameDesc.Width, Color.green);
+                                (int) leftHand.X, (int) leftHand.Y, Color.green);
+        DrawLine(debugTexture, rightIdx % manager.DepthFrameDesc.Width, (int)rightIdx / manager.DepthFrameDesc.Width,
+                              (int)rightHand.X, (int)rightHand.Y, Color.green);
         debugTexture.Apply();
         debugPlane.GetComponent<Renderer>().material.mainTexture = debugTexture;
     }
