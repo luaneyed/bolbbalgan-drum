@@ -61,7 +61,6 @@ public class StickRecognizer {
             }
         }
 
-        //int leftStickEndIdx = GetStickEnd(manager.DepthData, leftHandCameraPoint, leftHandDepthPoint);
         int leftStickEndIdx = GetStickEnd(tempDepthData, leftHandCameraPoint, leftHandDepthPoint, ref colorData);
         if (leftStickEndIdx == 0)
         {
@@ -145,16 +144,6 @@ public class StickRecognizer {
         System.Action<int> colorRed = (idx) =>
         {
             colorData[3 * idx + 1] = 255;
-            /*
-            colorData[3 * (idx + 1) + 1] = 255;
-            colorData[3 * (idx - 1) + 1] = 255;
-            colorData[3 * (idx + _Width) + 1] = 255;
-            colorData[3 * (idx - _Width) + 1] = 255;
-            colorData[3 * (idx + _Width + 1) + 1] = 255;
-            colorData[3 * (idx + _Width - 1) + 1] = 255;
-            colorData[3 * (idx - _Width + 1) + 1] = 255;
-            colorData[3 * (idx - _Width - 1) + 1] = 255;
-            */
 
         };
         colorRed(leftIdx);
@@ -231,18 +220,6 @@ public class StickRecognizer {
         datas.handIndX = x;
         datas.handIndY = y;
 
-        /*
-        DFS_Datas datas = DFS_Datas {
-            depthData,
-            max,
-            maxX,
-            maxY,
-            visited,
-            x,
-            y,
-        };
-        */
-
         DFS_helper(ref datas, Pos2Idx(x, y));
 
         if (datas.max == 0) {
@@ -278,17 +255,6 @@ public class StickRecognizer {
             datas.handIndX = 1;
             DFS_helper(ref datas, Pos2Idx(x + 1, y + 1));
         }
-
-        /*for (int i = 0; i < depthData.Length; i ++)
-        {
-            if (visited.Contains(i))
-            {
-                colorData[3 * i] = 255;
-            }
-        }
-        debugTexture.LoadRawTextureData(colorData);
-        debugTexture.Apply();
-        debugPlane.GetComponent<Renderer>().material.mainTexture = debugTexture;*/
 
         return Pos2Idx(datas.maxX, datas.maxY);
     }

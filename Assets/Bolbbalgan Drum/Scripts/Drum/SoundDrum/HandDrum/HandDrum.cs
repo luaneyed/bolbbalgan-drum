@@ -20,8 +20,12 @@ abstract class HandDrum : SoundDrum {
             Utility.XZdistance(motion.leftHandPos, this.transform.position) < radius)
         {
             leftClear = false;
-            byLeft = true;
-            return true;
+
+            if (motion.leftHandClear) {
+                motion.leftHandClear = false;
+                byLeft = true;
+                return true;
+            }
         }
 
         if (motion.rightHandPos.y > this.transform.position.y)
@@ -33,8 +37,12 @@ abstract class HandDrum : SoundDrum {
             Utility.XZdistance(motion.rightHandPos, this.transform.position) < radius)
         {
             rightClear = false;
-            byLeft = false;
-            return true;
+
+            if (motion.rightHandClear) {
+                motion.rightHandClear = false;
+                byLeft = false;
+                return true;
+            }
         }
 
         return false;

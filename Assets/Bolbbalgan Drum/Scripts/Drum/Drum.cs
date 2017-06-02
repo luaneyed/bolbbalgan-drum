@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class Drum : MonoBehaviour {
     protected MotionAnalyzer motion;
     protected State state;
-    //public Collider coll;
 
     protected void Start()
     {

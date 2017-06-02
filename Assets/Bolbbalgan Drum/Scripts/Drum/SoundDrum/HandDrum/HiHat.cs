@@ -18,7 +18,6 @@ class HiHat : HandDrum
 
     override protected AudioSource getAudio()
     {
-        //Debug.Log("play" + motion.isHiHatOpened);
         if (motion.isHiHatOpened)
         {
             return openAudio;

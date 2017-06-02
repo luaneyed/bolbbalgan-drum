@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-class Crash : HandDrum{
+class Crash : HandDrum
+{
     override protected float radius { get { return 3; } }
 }

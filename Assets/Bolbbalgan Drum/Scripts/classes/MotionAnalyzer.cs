@@ -16,6 +16,8 @@ public class MotionAnalyzer
     public bool isHiHatOpened = true;
     public bool hitLeftFootDrum = false;
     public bool hitRightFootDrum = false;
+    public bool leftHandClear = true;
+    public bool rightHandClear = true;
     private bool leftFootClear, rightFootClear;
     float prevTime;
     
@@ -50,7 +52,6 @@ public class MotionAnalyzer
         rightHandVel = (rightHandPos - prevRightHandPos) / timeDiff;
         leftKneeVel = (leftKneePos - prevLeftKneePos) / timeDiff;
         rightKneeVel = (rightKneePos - prevRightKneePos) / timeDiff;
-        //Debug.Log(rightKneeVel.y);
 
         // update prev, lasttime
         prevLeftHandPos = leftHandPos;
@@ -61,6 +62,7 @@ public class MotionAnalyzer
         prevTime = currTime;
 
         checkFootDrum();
+        checkHandClear();
     }
 
     public void onStartPlaying(KinectManager manager)
@@ -94,5 +96,14 @@ public class MotionAnalyzer
         }
         
         isHiHatOpened = (leftKneePos.y > initLeftKneePos.y + 0.3);
+    }
+
+    void checkHandClear() {
+        if (leftHandVel > 0) {
+            leftHandClear = true;
+        }
+        if (rightHandVel > 0) {
+            rightHandClear = true;
+        }
     }
 }
