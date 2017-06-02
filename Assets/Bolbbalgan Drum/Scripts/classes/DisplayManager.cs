@@ -7,64 +7,62 @@ using Kinect = Windows.Kinect;
 public class DisplayManager
 {
     GameObject leftStick, rightStick;
+    GameObject drum;
+    GameObject menuDrum;
+    GameObject[] parts;
+    Camera MainCamera;
 
-    public DisplayManager()
+    public DisplayManager(Camera camera)
     {
-        //leftStick = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        // rightStick = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-
-        leftStick = (GameObject)GameObject.Instantiate(Resources.Load("Stick"));
-        rightStick = (GameObject)GameObject.Instantiate(Resources.Load("Stick"));
-
-        //leftStick.transform.localScale = new Vector3(1, 10, 1);
-       // rightStick.transform.localScale = new Vector3(1, 10, 1);
-        
-        /*
-        Vector3 scale = rightHand.transform.localScale;
-        scale.x = -scale.x;
-        rightHand.transform.localScale = scale;
-        */
+        MainCamera = camera;
     }
 
-    public void DrawBody(KinectManager manager)
+    public void InitDisplay(KinectManager manager)
     {
-        leftStick.transform.position = JointToVector3(manager.JointData[Kinect.JointType.HandLeft]);
-        rightStick.transform.position = JointToVector3(manager.JointData[Kinect.JointType.HandRight]);
+        leftStick = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/stick"));
+        rightStick = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/stick"));
+        Vector3 neckPos = Utility.CameraSpacePointToWorld(manager.JointData[Kinect.JointType.Neck].Position);
+        drum = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/RealDrum"));
+        drum.transform.Translate(neckPos);
+        DeactivateDrum();
 
-        leftStick.transform.rotation = JointOrientationToQuaternion(manager.JointOriendationData[Kinect.JointType.WristLeft]);
-        rightStick.transform.rotation = JointOrientationToQuaternion(manager.JointOriendationData[Kinect.JointType.WristRight]);
+        menuDrum = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/MenuDrum"));
+        menuDrum.transform.Translate(neckPos);
+        ActivateMenuDrum();
+
+        //Camera.SetupCurrent(drum.GetComponentInChildren<Camera>());
     }
 
-    public void DisplayPlayer(KinectManager manager, Kinect.CameraSpacePoint leftTip, Kinect.CameraSpacePoint rightTip, ushort leftDepth, ushort rightDepth)
+    public void ActivateDrum()
+    {
+        drum.SetActive(true);
+        Camera.SetupCurrent(drum.GetComponentInChildren<Camera>());
+    }
+
+    public void DeactivateDrum()
+    {
+        drum.SetActive(false);
+    }
+
+    public void ActivateMenuDrum()
+    {
+        menuDrum.SetActive(true);
+        Camera.SetupCurrent(menuDrum.GetComponentInChildren<Camera>());
+    }
+
+    public void DeactivateMenuDrum()
+    {
+        menuDrum.SetActive(false);
+    }
+
+    public void DisplayPlayer(KinectManager manager, Kinect.CameraSpacePoint leftTip, Kinect.CameraSpacePoint rightTip)
     {
         Kinect.CameraSpacePoint leftHand = manager.JointData[Kinect.JointType.HandLeft].Position;
         Kinect.CameraSpacePoint rightHand = manager.JointData[Kinect.JointType.HandRight].Position;
 
-        leftStick.transform.position = JointToVector3(manager.JointData[Kinect.JointType.HandLeft]);
-        rightStick.transform.position = JointToVector3(manager.JointData[Kinect.JointType.HandRight]);
-
-        Vector3 leftVec = new Vector3(leftTip.X - leftHand.X, leftTip.Y - leftHand.Y, leftDepth / 1000 - leftHand.Z);
-        Vector3 rightVec = new Vector3(rightTip.X - rightHand.X, rightTip.Y - rightHand.Y, rightDepth / 1000 - rightHand.Z);
-        leftStick.transform.rotation = Quaternion.LookRotation(leftVec, Vector3.up);
-        rightStick.transform.rotation = Quaternion.LookRotation(rightVec, Vector3.up);
-    }
-
-    private Vector3 JointToVector3(Kinect.Joint joint)
-    {
-        Vector3 vec;
-        vec.x = joint.Position.X;
-        vec.y = joint.Position.Y;
-        vec.z = joint.Position.Z;
-        return vec;
-    } 
-
-    private Quaternion JointOrientationToQuaternion(Kinect.JointOrientation ori)
-    {
-        Quaternion q;
-        q.x = ori.Orientation.X;
-        q.y = ori.Orientation.Y;
-        q.z = ori.Orientation.Z;
-        q.w = ori.Orientation.W;
-        return q;
+        leftStick.transform.position = Utility.CameraSpacePointToWorld(leftHand);
+        rightStick.transform.position = Utility.CameraSpacePointToWorld(rightHand);
+        leftStick.transform.LookAt(Utility.CameraSpacePointToWorld(leftTip));
+        rightStick.transform.LookAt(Utility.CameraSpacePointToWorld(rightTip));
     }
 }

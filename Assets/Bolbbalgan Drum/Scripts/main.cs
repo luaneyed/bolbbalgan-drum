@@ -5,41 +5,88 @@ using UnityEngine;
 using Kinect = Windows.Kinect;
 
 public class main : MonoBehaviour {
+    public Camera MainCamera;
+
+    public MotionAnalyzer Motion { get; private set; }
+
     private KinectManager _KinectManager;
     private StickRecognizer _StickRecognizer;
-    private DisplayManager _DisplayManager;
+    public DisplayManager _DisplayManager;
+    public State _State;
 
-    void Start () {
+    int counter = 10;
+
+    void Awake ()
+    {
+        _State = new State();
+        _State.MainStatus = State.Status.Initial;
         _KinectManager = new KinectManager();
         _StickRecognizer = new StickRecognizer(_KinectManager);
-        _DisplayManager = new DisplayManager();
+        _DisplayManager = new DisplayManager(MainCamera);
+        Motion = new MotionAnalyzer();
+
     }
 	
-	void Update () {
+	void Update ()
+    {
         KinectManager.Status status = _KinectManager.Update();
-        
-        switch(status)
+
+        _State.updates2++;
+        switch (status)
         {
             case KinectManager.Status.ZeroBody:
+                Debug.Log("ZeroBody?");
+                _State.handsEnabled = false;
+                _State.updates++;
                 return;
 
             case KinectManager.Status.MultiBody:
             case KinectManager.Status.OneBody:
                 break;
         }
+        _State.updates++;
 
         bool leftStatus, rightStatus;
-        ushort leftDepth, rightDepth;
         Kinect.CameraSpacePoint leftTip, rightTip;
-        _StickRecognizer.FindTip(_KinectManager, out leftTip, out rightTip, out leftStatus, out rightStatus, out leftDepth, out rightDepth);
+        _StickRecognizer.FindTip(_KinectManager, out leftTip, out rightTip, out leftStatus, out rightStatus);
 
-        if(leftStatus && rightStatus)
+        if (leftStatus && rightStatus)
         {
-            //_DisplayManager.DrawBody(_KinectManager);
-            _DisplayManager.DisplayPlayer(_KinectManager, leftTip, rightTip, leftDepth, rightDepth);
+            counter--;
+            if (counter > 0)
+                return;
+
+            switch(_State.MainStatus)
+            {
+                case State.Status.Initial:
+                    onStartPlaying();
+                    _State.MainStatus = State.Status.Menu;
+                    _DisplayManager.InitDisplay(_KinectManager);
+                    break;
+                case State.Status.Playing:
+                    break;
+                case State.Status.Menu:
+                    // Menu에서 Plying은 ButtonDrum Trigger를 통해 넘어가야 함
+                    //MainStatus = Status.Playing;
+                    //_DisplayManager.ActivateDrum();
+                    break;
+
+            }
+
+            // 플레이어는 항상 display 돼야 함
+            _DisplayManager.DisplayPlayer(_KinectManager, leftTip, rightTip);
+            Motion.Update(_KinectManager, leftTip, rightTip);
+            Debug.Log("enabled");
+            _State.handsEnabled = true;
+        } else
+        {
+            Debug.Log("disabled");
+            _State.handsEnabled = false;
         }
-        // MotionAnalyser
-        // SoundManger
-        // DisplayManager
+    }
+
+    void onStartPlaying()
+    {
+        Motion.onStartPlaying(_KinectManager);
     }
 }

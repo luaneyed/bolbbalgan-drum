@@ -91,12 +91,18 @@ public class KinectManager {
         // TODO : find closest body?
         int bodyCounter = 0;
         mainBodyIdx = -1;
+        float minDist = -1;
 
         for(int i = 0; i < _Sensor.BodyFrameSource.BodyCount; i++)
         {
             if(_BodyData[i].IsTracked)
             {
-                mainBodyIdx = i;
+                float dist = _BodyData[i].Joints[Kinect.JointType.Head].Position.Z;
+                if (minDist == -1 || dist < minDist)
+                {
+                    minDist = dist;
+                    mainBodyIdx = i;
+                }
                 bodyCounter++;
             }
         }

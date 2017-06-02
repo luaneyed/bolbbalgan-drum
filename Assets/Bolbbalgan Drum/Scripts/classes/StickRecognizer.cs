@@ -34,12 +34,14 @@ public class StickRecognizer {
         _Mapper = manager.Mapper;
 
         debugPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        debugPlane.transform.Translate(-10, 2, 0);
+        debugPlane.transform.Rotate(-90, 180, 0);
         debugTexture = new Texture2D(manager.DepthFrameDesc.Width, manager.DepthFrameDesc.Height, TextureFormat.RGB24, false);
     }
 
     public void FindTip(KinectManager manager,
         out Kinect.CameraSpacePoint leftTipCameraPoint, out Kinect.CameraSpacePoint rightTipCameraPoint,
-        out bool leftStatus, out bool rightStatus, out ushort leftDepth, out ushort rightDepth)
+        out bool leftStatus, out bool rightStatus)
     {
         Kinect.CameraSpacePoint leftHandCameraPoint = manager.JointData[Kinect.JointType.HandLeft].Position;
         Kinect.DepthSpacePoint leftHandDepthPoint = manager.Mapper.MapCameraPointToDepthSpace(leftHandCameraPoint);
@@ -49,8 +51,6 @@ public class StickRecognizer {
 
         ushort[] tempDepthData = new ushort[manager.DepthData.Length];
         tempDepthData = (ushort[])manager.DepthData.Clone();
-        leftDepth = 0;
-        rightDepth = 0;
  
 
         for(int i = 0; i < tempDepthData.Length; i++)
@@ -79,7 +79,6 @@ public class StickRecognizer {
             Kinect.DepthSpacePoint leftTipDepthPoint = new Kinect.DepthSpacePoint();
             leftTipDepthPoint.X = leftStickEndIdx % _Width;
             leftTipDepthPoint.Y = leftStickEndIdx / _Width;
-            leftDepth = manager.DepthData[leftStickEndIdx];
             leftTipCameraPoint = manager.Mapper.MapDepthPointToCameraSpace(leftTipDepthPoint, manager.DepthData[leftStickEndIdx]);
 
             _LeftTipCache = leftTipCameraPoint;
@@ -118,7 +117,6 @@ public class StickRecognizer {
             Kinect.DepthSpacePoint rightTipDepthPoint = new Kinect.DepthSpacePoint();
             rightTipDepthPoint.X = rightStickEndIdx % _Width;
             rightTipDepthPoint.Y = rightStickEndIdx / _Width;
-            rightDepth = manager.DepthData[rightStickEndIdx];
             rightTipCameraPoint = manager.Mapper.MapDepthPointToCameraSpace(rightTipDepthPoint, manager.DepthData[rightStickEndIdx]);
 
 
@@ -292,7 +290,6 @@ public class StickRecognizer {
         debugTexture.Apply();
         debugPlane.GetComponent<Renderer>().material.mainTexture = debugTexture;*/
 
-        Debug.Log(datas.max);
         return Pos2Idx(datas.maxX, datas.maxY);
     }
 
