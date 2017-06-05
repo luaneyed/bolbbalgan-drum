@@ -54,7 +54,7 @@ public class KinectManager {
         Kinect.MultiSourceFrame frame = _Reader.AcquireLatestFrame();
         if(frame == null)
         {
-            Debug.LogWarning("Frame not arrived");
+            //Debug.LogWarning("Frame not arrived");
             return Status.ZeroBody;
         }
 

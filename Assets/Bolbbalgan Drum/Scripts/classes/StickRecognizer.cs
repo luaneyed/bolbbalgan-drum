@@ -33,10 +33,10 @@ public class StickRecognizer {
         _RightCacheElapsedFrame = 10;
         _Mapper = manager.Mapper;
 
-        debugPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        debugPlane.transform.Translate(-10, 2, 0);
-        debugPlane.transform.Rotate(-90, 180, 0);
-        debugTexture = new Texture2D(manager.DepthFrameDesc.Width, manager.DepthFrameDesc.Height, TextureFormat.RGB24, false);
+        //debugPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        //debugPlane.transform.Translate(-10, 2, 0);
+        //debugPlane.transform.Rotate(-90, 180, 0);
+        //debugTexture = new Texture2D(manager.DepthFrameDesc.Width, manager.DepthFrameDesc.Height, TextureFormat.RGB24, false);
     }
 
     public void FindTip(KinectManager manager,
@@ -127,7 +127,7 @@ public class StickRecognizer {
 
 
         ushort[] depthData = manager.DepthData;
-        DrawDebugImg(manager, leftStickEndIdx, rightStickEndIdx);
+        //DrawDebugImg(manager, leftStickEndIdx, rightStickEndIdx);
     }
 
     private void DrawDebugImg(KinectManager manager, int leftIdx, int rightIdx)
@@ -149,7 +149,7 @@ public class StickRecognizer {
         colorRed(leftIdx);
         colorRed(rightIdx);
 
-        debugTexture.LoadRawTextureData(colorData);
+        //debugTexture.LoadRawTextureData(colorData);
 
         Kinect.DepthSpacePoint leftHand = manager.Mapper.MapCameraPointToDepthSpace(manager.JointData[Kinect.JointType.HandLeft].Position);
         Kinect.DepthSpacePoint rightHand = manager.Mapper.MapCameraPointToDepthSpace(manager.JointData[Kinect.JointType.HandRight].Position);
@@ -158,8 +158,8 @@ public class StickRecognizer {
                                 (int) leftHand.X, (int) leftHand.Y, Color.green);
         DrawLine(debugTexture, rightIdx % manager.DepthFrameDesc.Width, (int)rightIdx / manager.DepthFrameDesc.Width,
                               (int)rightHand.X, (int)rightHand.Y, Color.green);
-        debugTexture.Apply();
-        debugPlane.GetComponent<Renderer>().material.mainTexture = debugTexture;
+        //debugTexture.Apply();
+        //debugPlane.GetComponent<Renderer>().material.mainTexture = debugTexture;
     }
     
     void DrawLine(Texture2D tex, int x0, int y0, int x1, int y1, Color col)

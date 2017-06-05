@@ -99,10 +99,10 @@ public class MotionAnalyzer
     }
 
     void checkHandClear() {
-        if (leftHandVel > 0) {
+        if (leftHandVel.y > 0) {
             leftHandClear = true;
         }
-        if (rightHandVel > 0) {
+        if (rightHandVel.y > 0) {
             rightHandClear = true;
         }
     }

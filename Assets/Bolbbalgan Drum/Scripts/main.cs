@@ -16,18 +16,33 @@ public class main : MonoBehaviour {
 
     int counter = 10;
 
-    void Awake ()
+    void Start()
     {
         _State = new State();
         _State.MainStatus = State.Status.Initial;
+
+        if (!PlayerPrefs.HasKey("SoundIdx"))
+        {
+            PlayerPrefs.SetInt("SoundIdx", 0);
+        }
+        if (!PlayerPrefs.HasKey("DesignIdx"))
+        {
+            PlayerPrefs.SetInt("DesignIdx", 0);
+        }
+
+        _State.SelectedSound = (State.CustomizeSoundOption) PlayerPrefs.GetInt("SoundIdx");
+        _State.SelectedDesign = (State.CustomizeDesignOption)PlayerPrefs.GetInt("DesignIdx");
+    }
+
+    void Awake()
+    {
         _KinectManager = new KinectManager();
         _StickRecognizer = new StickRecognizer(_KinectManager);
         _DisplayManager = new DisplayManager(MainCamera);
         Motion = new MotionAnalyzer();
-
     }
-	
-	void Update ()
+
+    void Update()
     {
         KinectManager.Status status = _KinectManager.Update();
 
@@ -35,7 +50,7 @@ public class main : MonoBehaviour {
         switch (status)
         {
             case KinectManager.Status.ZeroBody:
-                Debug.Log("ZeroBody?");
+                //Debug.Log("ZeroBody?");
                 _State.handsEnabled = false;
                 _State.updates++;
                 return;
@@ -49,44 +64,73 @@ public class main : MonoBehaviour {
         bool leftStatus, rightStatus;
         Kinect.CameraSpacePoint leftTip, rightTip;
         _StickRecognizer.FindTip(_KinectManager, out leftTip, out rightTip, out leftStatus, out rightStatus);
-
         if (leftStatus && rightStatus)
         {
             counter--;
             if (counter > 0)
                 return;
 
-            switch(_State.MainStatus)
+            switch (_State.MainStatus)
             {
                 case State.Status.Initial:
-                    onStartPlaying();
+                    Motion.onStartPlaying(_KinectManager);
+                    _DisplayManager.CreateHands();
                     _State.MainStatus = State.Status.Menu;
-                    _DisplayManager.InitDisplay(_KinectManager);
+                    _DisplayManager.ChangeDrum(_State.MainStatus, _KinectManager.JointData[Kinect.JointType.Neck].Position);
                     break;
-                case State.Status.Playing:
+                default:
                     break;
-                case State.Status.Menu:
-                    // Menu에서 Plying은 ButtonDrum Trigger를 통해 넘어가야 함
-                    //MainStatus = Status.Playing;
-                    //_DisplayManager.ActivateDrum();
-                    break;
-
             }
 
             // 플레이어는 항상 display 돼야 함
             _DisplayManager.DisplayPlayer(_KinectManager, leftTip, rightTip);
             Motion.Update(_KinectManager, leftTip, rightTip);
-            Debug.Log("enabled");
             _State.handsEnabled = true;
         } else
         {
-            Debug.Log("disabled");
             _State.handsEnabled = false;
         }
     }
 
-    void onStartPlaying()
+    public void PlayMode()
     {
-        Motion.onStartPlaying(_KinectManager);
+        _State.MainStatus = State.Status.Playing;
+        _DisplayManager.ChangeDrum(_State.MainStatus, _KinectManager.JointData[Kinect.JointType.Neck].Position);
+    }
+
+    public void MenuMode()
+    {
+        _State.MainStatus = State.Status.Menu;
+        _DisplayManager.ChangeDrum(_State.MainStatus, _KinectManager.JointData[Kinect.JointType.Neck].Position);
+    }
+
+    public void CustomizeMenuMode()
+    {
+        _State.MainStatus = State.Status.CustomizeMenu;
+        _DisplayManager.ChangeDrum(_State.MainStatus, _KinectManager.JointData[Kinect.JointType.Neck].Position);
+    }
+
+    public void PositionCustomizeMenuMode()
+    {
+        _State.MainStatus = State.Status.PositionCustomizing;
+        _DisplayManager.ChangeDrum(_State.MainStatus, _KinectManager.JointData[Kinect.JointType.Neck].Position);
+    }
+    public void PositionCustomizeMode()
+    {
+        _State.MainStatus = State.Status.PositionMoving;
+        _DisplayManager.ChangeDrum(_State.MainStatus, _KinectManager.JointData[Kinect.JointType.Neck].Position);
+    }
+
+    public void SoundCustomizeMode()
+    {
+        _State.MainStatus = State.Status.SoundCustomizing;
+        _DisplayManager.ChangeDrum(_State.MainStatus, _KinectManager.JointData[Kinect.JointType.Neck].Position);
+    }
+
+    public void DesignCustomizeMode()
+    {
+        _State.MainStatus = State.Status.DesignCustomizing;
+        _DisplayManager.ChangeDrum(_State.MainStatus, _KinectManager.JointData[Kinect.JointType.Neck].Position);
+
     }
 }

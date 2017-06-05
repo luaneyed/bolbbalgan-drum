@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-class KickDrum : FootDrum {
+class KickDrum : FootDrum
+{
+    override protected string drumName { get { return "Bass_drum"; } }
     protected override Vector3 kneePos { get {return motion.rightKneePos;} }
 
     protected override float getIntensity()

@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract class HandDrum : SoundDrum {
+abstract class HandDrum : SoundDrum
+{
     private bool leftClear = true, rightClear = true;
     private bool byLeft;
+
 
     abstract protected float radius { get; }
 

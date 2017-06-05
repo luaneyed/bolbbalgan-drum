@@ -4,5 +4,6 @@ using UnityEngine;
 
 class Crash : HandDrum
 {
+    override protected string drumName { get { return "Crash"; } }
     override protected float radius { get { return 3; } }
 }

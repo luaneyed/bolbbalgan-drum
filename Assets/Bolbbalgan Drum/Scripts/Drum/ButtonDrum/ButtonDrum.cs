@@ -5,8 +5,8 @@ using UnityEngine;
 
 public abstract class ButtonDrum : Drum
 {
-    private bool leftClear = true, rightClear = true;
-    private int radius = 2;
+    protected bool leftClear = true, rightClear = true;
+    protected int radius = 2;
 
     void Start()
     {

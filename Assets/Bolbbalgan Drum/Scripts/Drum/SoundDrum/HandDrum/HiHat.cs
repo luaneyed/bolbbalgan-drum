@@ -4,17 +4,32 @@ using UnityEngine;
 
 class HiHat : HandDrum
 {
+    override protected string drumName { get { return "Hi-hat"; } }
+    override protected float radius { get { return 2; } }
+
     public AudioSource openAudio;
     public AudioSource closeAudio;
+    private bool wasHiHatOpened;
     void Start()
     {
-        openAudio = GetComponents<AudioSource>()[1];
-        closeAudio = GetComponents<AudioSource>()[0];
+        int audioIdx = PlayerPrefs.GetInt("SoundIdx");
+
+        openAudio = GetComponents<AudioSource>()[2*audioIdx + 1];
+        closeAudio = GetComponents<AudioSource>()[2*audioIdx];
 
         base.Start();
     }
 
-    override protected float radius { get { return 2; } }
+    protected void Update()
+    {
+        base.Update();
+        
+        if (wasHiHatOpened && !motion.isHiHatOpened)
+        {
+            openAudio.Stop();
+        }
+        wasHiHatOpened = motion.isHiHatOpened;
+    }
 
     override protected AudioSource getAudio()
     {

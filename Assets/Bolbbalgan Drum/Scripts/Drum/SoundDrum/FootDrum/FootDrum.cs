@@ -5,14 +5,15 @@ using UnityEngine;
 abstract public class FootDrum : SoundDrum {
     abstract protected Vector3 kneePos { get; }
 
-    void Update()
+    protected void Update()
     {
         base.Update();
+
         state.updates--;
         state.updates2--;
         if (Hit())
         {
-            Debug.Log(motion.rightKneeVel.y + " : " + this.GetInstanceID() + " : " + state.updates + " , " + state.updates2);
+            //Debug.Log(motion.rightKneeVel.y + " : " + this.GetInstanceID() + " : " + state.updates + " , " + state.updates2);
         }
     }
 
